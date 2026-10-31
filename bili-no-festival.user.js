@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         还原B站活动视频页布局
 // @namespace    bili-no-festival
-// @version      2.1.0
+// @version      2.2.0
 // @description  把活动专题页（festival）还原成接近普通视频页
 // @author       Regened
 // @license      AGPL-3.0-or-later
@@ -124,6 +124,37 @@
     '  width: 100% !important; display: flex !important; align-items: center !important; }',
     '.grid-right > .video-staffs .video-staffs-item {',
     '  width: auto !important; flex: 1 1 auto !important; min-width: 0 !important; }',
+    /* ---- 合作视频（≥2 个成员）：改用普通页 .membersinfo-upcard 的竖向小卡 ----
+       普通页每个成员 87x102：头像 40 居中在上，名字 13px + 角色 12px 灰在下，多个横排 */
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) {',
+    '  height: 176px !important; padding: 18px 0 0 !important; display: block !important;',
+    '  align-items: initial !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .video-staffs-header {',
+    '  display: flex !important; align-items: center !important;',
+    '  height: 44px !important; padding: 0 16px !important; margin: 0 !important;',
+    '  background: #f1f2f3 !important; border-radius: 6px !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .staffs-title {',
+    '  font-size: 15px !important; font-weight: 500 !important; line-height: 44px !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .video-staffs-list {',
+    '  display: flex !important; flex-wrap: wrap !important; padding: 12px 0 0 !important;',
+    '  justify-content: flex-start !important; width: 100% !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .staff-less {',
+    '  width: 87px !important; height: 102px !important; display: block !important;',
+    '  padding: 0 0 18px 0 !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .video-staffs-item {',
+    '  width: 87px !important; height: 84px !important; display: flex !important;',
+    '  flex-direction: column !important; align-items: center !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .video-staffs-cover {',
+    '  width: 40px !important; height: 40px !important; margin: 0 auto 4px !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .staff-btn { display: none !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .video-staffs-info {',
+    '  width: 87px !important; height: 36px !important; text-align: center !important;',
+    '  padding: 0 4px !important; margin-top: 8px !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .info-name {',
+    '  font-size: 13px !important; line-height: 18px !important;'
+    ,'  font-weight: 400 !important; color: #18191c !important; }',
+    '.grid-right > .video-staffs:has(.staff-less + .staff-less) .info-title {',
+    '  font-size: 12px !important; line-height: 18px !important; color: #9499a0 !important; }',
     '.video-staffs-header { display: none !important; }',
     '.video-staffs-cover, .video-staffs-cover .activity-image-card,',
     '.video-staffs-cover .activity-image-card__image { width: 48px !important; height: 48px !important;',
