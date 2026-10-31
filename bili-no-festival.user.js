@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         还原B站活动视频页布局
 // @namespace    bili-no-festival
-// @version      2.0.0
+// @version      2.1.0
 // @description  把活动专题页（festival）还原成接近普通视频页
 // @author       Regened
 // @license      AGPL-3.0-or-later
@@ -83,7 +83,8 @@
     '}',
     /* 选集内部条目本身不要底色，灰底由 .video-sections 整体承担 */
     '.video-episode-group, .video-sections .video-episode-card,',
-    '.video-sections-item { background: transparent !important; border-radius: 0 !important; }',
+    '.video-sections-item { background: transparent !important; border-radius: 0 !important;',
+    '  margin-bottom: 4px !important; }',
     /* ---- 尺寸对齐普通页 ---- */
     '.video-toobar_title { font-size: 20px !important; line-height: 28px !important; font-weight: 500 !important; }',
     '.video-desc-wrapper .view-count, .video-desc-wrapper .dm-count,',
@@ -107,6 +108,27 @@
     '.video-toolbar-content_left, .video-toolbar-content_right {',
     '  display: flex !important; align-items: center !important;',
     '}',
+    /* ≥1700 视口：普通页的按钮变成 100x36、图标 36x36、字号 14px */
+    '@media (min-width: 1700px) {',
+    '  .video-toolbar-content_item { min-width: 100px !important; height: 36px !important; font-size: 14px !important; }',
+    '  .video-toolbar-content_item i, .video-toolbar-content_item .content-item_icon {',
+    '    width: 36px !important; height: 36px !important; line-height: 36px !important; font-size: 30px !important; }',
+    '}',
+    /* ---- UP 信息卡：挪到右列顶部，对齐普通页 .up-info-container（350x104 / 头像 48 圆形 / 名字 15px） ---- */
+    '.grid-right > .video-staffs { height: 104px !important; padding: 0 !important;',
+    '  box-sizing: border-box !important; display: flex !important;',
+    '  align-items: center !important; background: #fff !important; }',
+    /* 内部条目原本写死 759px，挪到 350/411 宽的右列后会把「关注」按钮挤出去 */
+    '.grid-right > .video-staffs .staff-one, .grid-right > .video-staffs .video-staffs-list,',
+    '.grid-right > .video-staffs .video-staffs-list-slide {',
+    '  width: 100% !important; display: flex !important; align-items: center !important; }',
+    '.grid-right > .video-staffs .video-staffs-item {',
+    '  width: auto !important; flex: 1 1 auto !important; min-width: 0 !important; }',
+    '.video-staffs-header { display: none !important; }',
+    '.video-staffs-cover, .video-staffs-cover .activity-image-card,',
+    '.video-staffs-cover .activity-image-card__image { width: 48px !important; height: 48px !important;',
+    '  border-radius: 50% !important; overflow: hidden !important; }',
+    '.video-staffs-info .info-name { font-size: 15px !important; font-weight: 500 !important; color: #18191c !important; }',
     /* ---- 播放器四周的淡灰光晕（普通页 .bpx-player-container: rgb(241,242,243) 0 0 8px） ---- */
     '#bilibili-player, .bpx-player-container { box-shadow: 0 0 8px #f1f2f3 !important; }',
     /* ---- 去掉活动页工具栏里的空占位条 ---- */
@@ -139,9 +161,15 @@
     '  border-radius: 6px !important; overflow: hidden !important; }',
     '.recommend-video-card .card-info { flex: 1 1 auto !important; width: auto !important;',
     '  min-width: 0 !important; margin-left: 0 !important; }',
-    '.recommend-card-info-title { font-size: 15px !important; line-height: 19px !important; color: #18191c !important; }',
+    /* 标题：普通页 <p class="title"> 是两行截断（line-clamp 2 / h 38） */
+    '.recommend-card-info-title { font-size: 15px !important; line-height: 19px !important;',
+    '  color: #18191c !important; display: -webkit-box !important;',
+    '  -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important;',
+    '  overflow: hidden !important; min-height: 38px !important; }',
+    /* UP 名：普通页 .upname 是灰字 #9499a0，上下各 2px margin */
     '.recommend-video-card .count.up, .recommend-video-card .count.up a {',
-    '  font-size: 13px !important; line-height: 15px !important; color: #18191c !important; }',
+    '  font-size: 13px !important; line-height: 15px !important; color: #9499a0 !important; }',
+    '.recommend-video-card .count.up { margin: 2px 0 !important; }',
     '.recommend-video-card .count { font-size: 13px !important; line-height: 15px !important; color: #9499a0 !important; }',
     '.recommend-video-card .count .play, .recommend-video-card .count .danmaku {',
     '  font-size: 13px !important; color: #9499a0 !important; }',
@@ -150,11 +178,16 @@
     /* 弹幕列表 == 普通页 .danmaku-wrap（350x44） */
     '.video-danmuku, .video-danmuku .bui-collapse-header {',
     '  background: #f1f2f3 !important; border-radius: 6px !important; }',
-    '.video-danmuku { overflow: hidden !important; }',
-    /* 选集区整体一块 == 普通页 .video-pod */
+    '.video-danmuku { overflow: visible !important; }',   /* 不能 hidden，弹幕列表的弹出菜单会被裁掉 */
+    /* ---- 抬高层级：活动页这些浮层只有 z-index 1，会压在内容下面 ---- */
+    '.bui-dropdown-items, .bui-dropdown-panel { z-index: 100 !important; }',
+    '.v-popover, .van-popover, .van-popper { z-index: 10050 !important; }',
+    /* 选集区整体一块 == 普通页 .video-pod。
+       注意不能留 padding-top：滚动容器的 padding 区域是透明的，
+       内容会从这条缝里透出来（sticky 标题只能吸到 padding 内沿）。 */
     '.video-sections {',
     '  background: #f1f2f3 !important; border-radius: 6px !important;',
-    '  padding: 8px 16px !important; box-sizing: border-box !important;',
+    '  padding: 0 16px 8px !important; box-sizing: border-box !important;',
     '  margin: 0 0 12px 0 !important;',
     '}',
     /* 分组标题 sticky 吸顶时要有同色底，否则压在卡片上看不清 */
@@ -219,6 +252,16 @@
     });
   }
 
+  // UP 信息卡挪到右列顶部（普通页 .up-info-container 就在右列最上面，从导航下方开始）
+  function moveUpInfo() {
+    var staffs = document.querySelector('.video-staffs');
+    var gridRight = document.querySelector('.grid-right');
+    if (!staffs || !gridRight) return;
+    if (gridRight.firstElementChild === staffs) return;
+    gridRight.insertBefore(staffs, gridRight.firstChild);
+    lastOffset = null;   // 结构变了，右列偏移要重算
+  }
+
   // 右列顶部对齐播放器顶部（普通页右栏就是从播放器顶部开始的）
   var lastOffset = null;
   function alignRightColumn() {
@@ -226,6 +269,12 @@
     var gridRight = document.querySelector('.grid-right');
     var player = document.querySelector('.video-player-box');
     if (!gridBox || !gridRight || !player) return;
+    // UP 卡已占据右列顶部，把上方空间填满，不需要额外偏移
+    var first = gridRight.firstElementChild;
+    if (first && first.classList.contains('video-staffs')) {
+      if (lastOffset !== 0) { lastOffset = 0; gridRight.style.removeProperty('margin-top'); }
+      return;
+    }
     var offset = Math.round(player.getBoundingClientRect().top - gridBox.getBoundingClientRect().top);
     // 值没变就不写 style，避免 MutationObserver 自己触发自己
     if (offset === lastOffset) return;
@@ -237,6 +286,7 @@
   function inject() {
     swapHeader();
     moveTitleToTop();
+    moveUpInfo();
     if (!document.head) return;
     // 每次都同步样式内容：避免旧的同名标签（比如旧版本脚本先建了）导致新规则不生效
     var st = document.getElementById('bn-width-style');
